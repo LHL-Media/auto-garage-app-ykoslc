@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import {
   View,
   Text,
@@ -11,7 +11,7 @@ import {
   Alert,
   Image,
 } from 'react-native';
-import { useRouter } from 'expo-router';
+import { useRouter, useLocalSearchParams } from 'expo-router';
 import { useTheme } from '@react-navigation/native';
 import { colors } from '@/styles/commonStyles';
 import { IconSymbol } from '@/components/IconSymbol';
@@ -22,14 +22,19 @@ import DateTimePicker from '@react-native-community/datetimepicker';
 import { Picker } from '@react-native-picker/picker';
 import { useI18n } from '@/contexts/I18nContext';
 
-console.log('📝 VehicleRegistration loaded');
+console.log('✏️ VehicleEdit loaded');
 
-export default function VehicleRegistration() {
-  console.log('📝 VehicleRegistration rendering');
+export default function VehicleEdit() {
+  console.log('✏️ VehicleEdit rendering');
   
   const router = useRouter();
   const theme = useTheme();
   const { t } = useI18n();
+  const { id } = useLocalSearchParams<{ id: string }>();
+
+  const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
+  const [hasChanges, setHasChanges] = useState(false);
 
   const [vehicleType, setVehicleType] = useState<VehicleType>('car');
   const [make, setMake] = useState('');
@@ -43,7 +48,46 @@ export default function VehicleRegistration() {
   const [currentMileage, setCurrentMileage] = useState('');
   const [photoUri, setPhotoUri] = useState<string | undefined>();
   const [notes, setNotes] = useState('');
-  const [saving, setSaving] = useState(false);
+
+  const loadVehicle = useCallback(async () => {
+    try {
+      const vehicles = await StorageService.getVehicles();
+      const vehicle = vehicles.find(v => v.id === id);
+      
+      if (vehicle) {
+        console.log('✅ Vehicle loaded for editing:', vehicle);
+        setVehicleType(vehicle.type);
+        setMake(vehicle.make);
+        setModel(vehicle.model);
+        setYear(vehicle.year.toString());
+        setVin(vehicle.vin);
+        setLicensePlate(vehicle.licensePlate);
+        setPurchaseDate(new Date(vehicle.purchaseDate));
+        setPurchasePrice(vehicle.purchasePrice > 0 ? vehicle.purchasePrice.toString() : '');
+        setCurrentMileage(vehicle.currentMileage.toString());
+        setPhotoUri(vehicle.photoUri);
+        setNotes(vehicle.notes || '');
+      } else {
+        Alert.alert(t('error'), t('vehicleNotFound'));
+        router.back();
+      }
+    } catch (error) {
+      console.error('❌ Error loading vehicle:', error);
+      Alert.alert(t('error'), 'Failed to load vehicle');
+      router.back();
+    } finally {
+      setLoading(false);
+    }
+  }, [id, router, t]);
+
+  useEffect(() => {
+    console.log('🔍 Loading vehicle for editing:', id);
+    loadVehicle();
+  }, [id, loadVehicle]);
+
+  useEffect(() => {
+    setHasChanges(true);
+  }, [vehicleType, make, model, year, vin, licensePlate, purchaseDate, purchasePrice, currentMileage, photoUri, notes]);
 
   const handlePickImage = async () => {
     console.log('📷 Opening image picker');
@@ -81,8 +125,27 @@ export default function VehicleRegistration() {
     }
   };
 
+  const handleCancel = () => {
+    if (hasChanges) {
+      Alert.alert(
+        t('discardChangesTitle'),
+        t('discardChangesMessage'),
+        [
+          { text: t('cancel'), style: 'cancel' },
+          {
+            text: t('discardChanges'),
+            style: 'destructive',
+            onPress: () => router.back(),
+          },
+        ]
+      );
+    } else {
+      router.back();
+    }
+  };
+
   const handleSave = async () => {
-    console.log('💾 Saving vehicle');
+    console.log('💾 Saving vehicle changes');
     
     if (!make || !model || !year || !licensePlate || !currentMileage) {
       Alert.alert(t('missingInformation'), t('fillRequiredFields'));
@@ -110,7 +173,7 @@ export default function VehicleRegistration() {
 
     try {
       const vehicle: Vehicle = {
-        id: Date.now().toString(),
+        id,
         type: vehicleType,
         make,
         model,
@@ -126,26 +189,81 @@ export default function VehicleRegistration() {
         updatedAt: new Date().toISOString(),
       };
 
-      console.log('💾 Saving vehicle to storage:', vehicle);
+      console.log('💾 Updating vehicle in storage:', vehicle);
       await StorageService.saveVehicle(vehicle);
-      console.log('✅ Vehicle saved successfully');
+      console.log('✅ Vehicle updated successfully');
       
-      Alert.alert(t('success'), t('vehicleAddedSuccess'), [
+      Alert.alert(t('success'), t('vehicleUpdatedSuccess'), [
         {
           text: 'OK',
           onPress: () => {
-            console.log('🏠 Navigating back to garage');
-            router.replace('/(tabs)/(home)/');
+            console.log('🔙 Navigating back');
+            router.back();
           },
         },
       ]);
     } catch (error) {
-      console.error('❌ Error saving vehicle:', error);
-      Alert.alert(t('error'), 'Failed to save vehicle. Please try again.');
+      console.error('❌ Error updating vehicle:', error);
+      Alert.alert(t('error'), 'Failed to update vehicle. Please try again.');
     } finally {
       setSaving(false);
     }
   };
+
+  const handleDelete = () => {
+    Alert.alert(
+      t('deleteVehicleTitle'),
+      t('deleteVehicleMessage'),
+      [
+        { text: t('cancel'), style: 'cancel' },
+        {
+          text: t('delete'),
+          style: 'destructive',
+          onPress: () => {
+            Alert.alert(
+              t('deleteConfirmTitle'),
+              t('deleteConfirmMessage'),
+              [
+                { text: t('cancel'), style: 'cancel' },
+                {
+                  text: t('delete'),
+                  style: 'destructive',
+                  onPress: async () => {
+                    try {
+                      console.log('🗑️ Deleting vehicle:', id);
+                      await StorageService.deleteVehicle(id);
+                      console.log('✅ Vehicle deleted');
+                      Alert.alert(t('success'), t('vehicleDeletedSuccess'), [
+                        {
+                          text: 'OK',
+                          onPress: () => router.replace('/(tabs)/(home)/'),
+                        },
+                      ]);
+                    } catch (error) {
+                      console.error('❌ Error deleting vehicle:', error);
+                      Alert.alert(t('error'), 'Failed to delete vehicle');
+                    }
+                  },
+                },
+              ]
+            );
+          },
+        },
+      ]
+    );
+  };
+
+  if (loading) {
+    return (
+      <View style={[styles.container, { backgroundColor: theme.dark ? '#000' : colors.background }]}>
+        <View style={styles.loadingContainer}>
+          <Text style={[styles.loadingText, { color: theme.dark ? '#FFF' : colors.text }]}>
+            {t('loadingVehicle')}
+          </Text>
+        </View>
+      </View>
+    );
+  }
 
   return (
     <View style={[styles.container, { backgroundColor: theme.dark ? '#000' : colors.background }]}>
@@ -156,16 +274,16 @@ export default function VehicleRegistration() {
         keyboardShouldPersistTaps="handled"
       >
         <View style={styles.header}>
-          <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>
+          <TouchableOpacity onPress={handleCancel} style={styles.backButton}>
             <IconSymbol
-              ios_icon_name="chevron.left"
-              android_material_icon_name="arrow_back"
+              ios_icon_name="xmark"
+              android_material_icon_name="close"
               size={24}
               color={theme.dark ? '#FFF' : colors.text}
             />
           </TouchableOpacity>
           <Text style={[styles.title, { color: theme.dark ? '#FFF' : colors.text }]}>
-            {t('addVehicle')}
+            {t('edit')} {t('vehicle')}
           </Text>
         </View>
 
@@ -424,7 +542,7 @@ export default function VehicleRegistration() {
               backgroundColor: theme.dark ? '#1C1C1E' : colors.card,
               borderColor: theme.dark ? '#3A3A3C' : colors.border,
             }]}
-            onPress={() => router.back()}
+            onPress={handleCancel}
             disabled={saving}
           >
             <Text style={[styles.cancelButtonText, { color: theme.dark ? '#FFF' : colors.text }]}>
@@ -449,11 +567,25 @@ export default function VehicleRegistration() {
                   size={20}
                   color="#FFFFFF"
                 />
-                <Text style={styles.saveButtonText}>{t('save')} {t('vehicle')}</Text>
+                <Text style={styles.saveButtonText}>{t('saveChanges')}</Text>
               </>
             )}
           </TouchableOpacity>
         </View>
+
+        <TouchableOpacity
+          style={[styles.deleteButton, { backgroundColor: colors.error }]}
+          onPress={handleDelete}
+          disabled={saving}
+        >
+          <IconSymbol
+            ios_icon_name="trash.fill"
+            android_material_icon_name="delete"
+            size={20}
+            color="#FFFFFF"
+          />
+          <Text style={styles.deleteButtonText}>{t('delete')} {t('vehicle')}</Text>
+        </TouchableOpacity>
       </ScrollView>
     </View>
   );
@@ -470,6 +602,15 @@ const styles = StyleSheet.create({
     paddingTop: Platform.OS === 'android' ? 48 : 60,
     paddingHorizontal: 20,
     paddingBottom: 40,
+  },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  loadingText: {
+    fontSize: 16,
+    fontWeight: '500',
   },
   header: {
     flexDirection: 'row',
@@ -586,6 +727,20 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   saveButtonText: {
+    color: '#FFFFFF',
+    fontSize: 16,
+    fontWeight: '600',
+  },
+  deleteButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    padding: 16,
+    borderRadius: 12,
+    gap: 8,
+    marginTop: 16,
+  },
+  deleteButtonText: {
     color: '#FFFFFF',
     fontSize: 16,
     fontWeight: '600',

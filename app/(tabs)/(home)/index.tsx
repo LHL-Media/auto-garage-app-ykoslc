@@ -15,6 +15,7 @@ import { colors, commonStyles } from '@/styles/commonStyles';
 import { IconSymbol } from '@/components/IconSymbol';
 import { Vehicle } from '@/types/vehicle';
 import { StorageService } from '@/utils/storage';
+import { useI18n } from '@/contexts/I18nContext';
 
 console.log('🏠 GarageScreen loaded');
 
@@ -23,6 +24,7 @@ export default function GarageScreen() {
   
   const router = useRouter();
   const theme = useTheme();
+  const { t } = useI18n();
   const [vehicles, setVehicles] = useState<Vehicle[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -62,7 +64,7 @@ export default function GarageScreen() {
       <View style={[styles.container, { backgroundColor: theme.dark ? '#000' : colors.background }]}>
         <View style={styles.loadingContainer}>
           <Text style={[styles.loadingText, { color: theme.dark ? '#FFF' : colors.text }]}>
-            Loading your garage...
+            {t('loadingGarage')}
           </Text>
         </View>
       </View>
@@ -81,10 +83,10 @@ export default function GarageScreen() {
             color={theme.dark ? '#666' : colors.textSecondary}
           />
           <Text style={[styles.emptyTitle, { color: theme.dark ? '#FFF' : colors.text }]}>
-            Your Garage is Empty
+            {t('emptyGarageTitle')}
           </Text>
           <Text style={[styles.emptyText, { color: theme.dark ? '#AAA' : colors.textSecondary }]}>
-            Add your first vehicle to start tracking maintenance, fuel, and more.
+            {t('emptyGarageText')}
           </Text>
           <TouchableOpacity
             style={[styles.addButton, { backgroundColor: colors.primary }]}
@@ -96,7 +98,7 @@ export default function GarageScreen() {
               size={24}
               color="#FFFFFF"
             />
-            <Text style={styles.addButtonText}>Add Vehicle</Text>
+            <Text style={styles.addButtonText}>{t('addVehicle')}</Text>
           </TouchableOpacity>
         </View>
       </View>
@@ -113,10 +115,10 @@ export default function GarageScreen() {
       >
         <View style={styles.header}>
           <Text style={[styles.headerTitle, { color: theme.dark ? '#FFF' : colors.text }]}>
-            My Garage
+            {t('myGarage')}
           </Text>
           <Text style={[styles.headerSubtitle, { color: theme.dark ? '#AAA' : colors.textSecondary }]}>
-            {vehicles.length} {vehicles.length === 1 ? 'Vehicle' : 'Vehicles'}
+            {vehicles.length} {vehicles.length === 1 ? t('vehicle') : t('vehicles')}
           </Text>
         </View>
 
@@ -167,7 +169,7 @@ export default function GarageScreen() {
                         color={theme.dark ? '#AAA' : colors.textSecondary}
                       />
                       <Text style={[styles.detailText, { color: theme.dark ? '#AAA' : colors.textSecondary }]}>
-                        {vehicle.currentMileage.toLocaleString()} km
+                        {vehicle.currentMileage.toLocaleString()} {t('km')}
                       </Text>
                     </View>
                   </View>

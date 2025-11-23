@@ -1,13 +1,23 @@
 
 {
   "expo": {
-    "name": "Auto Garage",
-    "slug": "auto-garage",
+    "name": "Natively",
+    "slug": "Natively",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/natively-dark.png",
     "userInterfaceStyle": "automatic",
-    "newArchEnabled": true,
+    "splash": {
+      "image": "./assets/images/natively-dark.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#000000"
+    },
+    "updates": {
+      "fallbackToCacheTimeout": 0
+    },
+    "assetBundlePatterns": [
+      "**/*"
+    ],
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.anonymous.Natively",
@@ -20,8 +30,11 @@
         "foregroundImage": "./assets/images/natively-dark.png",
         "backgroundColor": "#000000"
       },
+      "package": "com.anonymous.Natively",
       "edgeToEdgeEnabled": true,
-      "package": "com.anonymous.Natively"
+      "experiments": {
+        "typedRoutes": true
+      }
     },
     "web": {
       "favicon": "./assets/images/final_quest_240x240.png",
@@ -32,12 +45,11 @@
       "expo-router",
       "expo-web-browser"
     ],
-    "scheme": "natively",
-    "experiments": {
-      "typedRoutes": true
-    },
     "extra": {
       "router": {}
+    },
+    "experiments": {
+      "newArchEnabled": true
     }
   }
 }

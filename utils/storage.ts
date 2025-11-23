@@ -76,6 +76,16 @@ export const StorageService = {
     }
   },
 
+  async deleteMaintenanceRecord(recordId: string): Promise<void> {
+    try {
+      const records = await this.getMaintenanceRecords();
+      const filtered = records.filter(r => r.id !== recordId);
+      await AsyncStorage.setItem(STORAGE_KEYS.MAINTENANCE, JSON.stringify(filtered));
+    } catch (error) {
+      console.error('Error deleting maintenance record:', error);
+    }
+  },
+
   // Fuel Logs
   async getFuelLogs(vehicleId?: string): Promise<FuelLog[]> {
     try {
@@ -100,6 +110,16 @@ export const StorageService = {
       await AsyncStorage.setItem(STORAGE_KEYS.FUEL_LOGS, JSON.stringify(logs));
     } catch (error) {
       console.error('Error saving fuel log:', error);
+    }
+  },
+
+  async deleteFuelLog(logId: string): Promise<void> {
+    try {
+      const logs = await this.getFuelLogs();
+      const filtered = logs.filter(l => l.id !== logId);
+      await AsyncStorage.setItem(STORAGE_KEYS.FUEL_LOGS, JSON.stringify(filtered));
+    } catch (error) {
+      console.error('Error deleting fuel log:', error);
     }
   },
 
@@ -130,6 +150,16 @@ export const StorageService = {
     }
   },
 
+  async deleteTripLog(logId: string): Promise<void> {
+    try {
+      const logs = await this.getTripLogs();
+      const filtered = logs.filter(l => l.id !== logId);
+      await AsyncStorage.setItem(STORAGE_KEYS.TRIP_LOGS, JSON.stringify(filtered));
+    } catch (error) {
+      console.error('Error deleting trip log:', error);
+    }
+  },
+
   // Modifications
   async getModifications(vehicleId?: string): Promise<Modification[]> {
     try {
@@ -157,6 +187,16 @@ export const StorageService = {
     }
   },
 
+  async deleteModification(modId: string): Promise<void> {
+    try {
+      const mods = await this.getModifications();
+      const filtered = mods.filter(m => m.id !== modId);
+      await AsyncStorage.setItem(STORAGE_KEYS.MODIFICATIONS, JSON.stringify(filtered));
+    } catch (error) {
+      console.error('Error deleting modification:', error);
+    }
+  },
+
   // Reminders
   async getReminders(vehicleId?: string): Promise<Reminder[]> {
     try {
@@ -181,6 +221,16 @@ export const StorageService = {
       await AsyncStorage.setItem(STORAGE_KEYS.REMINDERS, JSON.stringify(reminders));
     } catch (error) {
       console.error('Error saving reminder:', error);
+    }
+  },
+
+  async deleteReminder(reminderId: string): Promise<void> {
+    try {
+      const reminders = await this.getReminders();
+      const filtered = reminders.filter(r => r.id !== reminderId);
+      await AsyncStorage.setItem(STORAGE_KEYS.REMINDERS, JSON.stringify(filtered));
+    } catch (error) {
+      console.error('Error deleting reminder:', error);
     }
   },
 };
