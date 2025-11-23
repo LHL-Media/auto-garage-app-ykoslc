@@ -296,8 +296,12 @@ export const translations = {
 
 const i18n = new I18n(translations);
 
+// Get device locale using the new API
+const locales = Localization.getLocales();
+const deviceLocale = locales[0]?.languageCode || 'de';
+
 // Set the locale once at the beginning of your app
-i18n.locale = Localization.locale;
+i18n.locale = deviceLocale;
 
 // When a value is missing from a language it'll fall back to another language with the key present
 i18n.enableFallback = true;
@@ -311,11 +315,13 @@ export const initializeI18n = async () => {
     if (savedLanguage) {
       i18n.locale = savedLanguage;
     } else {
-      // Auto-detect device language
-      const deviceLocale = Localization.locale;
-      if (deviceLocale.startsWith('en')) {
+      // Auto-detect device language using the new API
+      const locales = Localization.getLocales();
+      const deviceLanguageCode = locales[0]?.languageCode || 'de';
+      
+      if (deviceLanguageCode.startsWith('en')) {
         i18n.locale = 'en';
-      } else if (deviceLocale.startsWith('de')) {
+      } else if (deviceLanguageCode.startsWith('de')) {
         i18n.locale = 'de';
       } else {
         i18n.locale = 'de'; // Default to German
