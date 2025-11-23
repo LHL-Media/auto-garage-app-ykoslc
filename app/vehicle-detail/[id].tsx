@@ -1,5 +1,5 @@
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import {
   View,
   Text,
@@ -28,12 +28,7 @@ export default function VehicleDetail() {
   const [vehicle, setVehicle] = useState<Vehicle | null>(null);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    console.log('🔍 Loading vehicle with ID:', id);
-    loadVehicle();
-  }, [id]);
-
-  const loadVehicle = async () => {
+  const loadVehicle = useCallback(async () => {
     try {
       const vehicles = await StorageService.getVehicles();
       const found = vehicles.find(v => v.id === id);
@@ -44,7 +39,12 @@ export default function VehicleDetail() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [id]);
+
+  useEffect(() => {
+    console.log('🔍 Loading vehicle with ID:', id);
+    loadVehicle();
+  }, [id, loadVehicle]);
 
   const handleDelete = () => {
     Alert.alert(

@@ -1,9 +1,10 @@
+
 import React from "react";
 import { Link } from "expo-router";
 import { Pressable, StyleSheet, View, Text } from "react-native";
 import { IconSymbol } from "@/components/IconSymbol";
 import { useTheme } from "@react-navigation/native";
-import { ModalDemo } from "./homeData";
+import { ModalDemo } from "@/components/homeData";
 import { GlassView } from "expo-glass-effect";
 
 interface DemoCardProps {

@@ -118,7 +118,7 @@ export default function RootLayout() {
         "You can keep using the app! Your changes will be saved locally and synced when you are back online."
       );
     }
-  }, [networkState.isConnected, networkState.isInternetReachable]);
+  }, [networkState.isConnected, networkState.isInternetReachable, networkState]);
 
   if (!loaded) {
     console.log('⏳ Waiting for fonts to load...');
