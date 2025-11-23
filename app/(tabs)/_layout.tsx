@@ -3,7 +3,11 @@ import React from 'react';
 import { Stack } from 'expo-router';
 import FloatingTabBar, { TabBarItem } from '@/components/FloatingTabBar';
 
+console.log('📱 TabLayout loaded');
+
 export default function TabLayout() {
+  console.log('🏠 TabLayout rendering');
+  
   const tabs: TabBarItem[] = [
     {
       name: '(home)',

@@ -1,17 +1,13 @@
+
 {
   "expo": {
     "name": "Auto Garage",
-    "slug": "Auto Garage",
+    "slug": "auto-garage",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/natively-dark.png",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
-    "splash": {
-      "image": "./assets/images/natively-dark.png",
-      "resizeMode": "contain",
-      "backgroundColor": "#000000"
-    },
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.anonymous.Natively",
@@ -43,6 +39,5 @@
     "extra": {
       "router": {}
     }
-  },
-  "scheme": "Auto Garage"
+  }
 }

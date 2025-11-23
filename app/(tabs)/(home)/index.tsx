@@ -16,7 +16,11 @@ import { IconSymbol } from '@/components/IconSymbol';
 import { Vehicle } from '@/types/vehicle';
 import { StorageService } from '@/utils/storage';
 
+console.log('🏠 GarageScreen loaded');
+
 export default function GarageScreen() {
+  console.log('🏠 GarageScreen rendering');
+  
   const router = useRouter();
   const theme = useTheme();
   const [vehicles, setVehicles] = useState<Vehicle[]>([]);
@@ -24,30 +28,36 @@ export default function GarageScreen() {
 
   useFocusEffect(
     React.useCallback(() => {
+      console.log('🔄 GarageScreen focused, loading vehicles');
       loadVehicles();
     }, [])
   );
 
   const loadVehicles = async () => {
     try {
+      console.log('📦 Loading vehicles from storage');
       const data = await StorageService.getVehicles();
+      console.log('✅ Vehicles loaded:', data.length);
       setVehicles(data);
     } catch (error) {
-      console.error('Error loading vehicles:', error);
+      console.error('❌ Error loading vehicles:', error);
     } finally {
       setLoading(false);
     }
   };
 
   const handleAddVehicle = () => {
-    router.push('/vehicle-type-selection');
+    console.log('➕ Add vehicle button pressed');
+    router.push('/vehicle-registration');
   };
 
   const handleVehiclePress = (vehicleId: string) => {
+    console.log('🚗 Vehicle pressed:', vehicleId);
     router.push(`/vehicle-detail/${vehicleId}`);
   };
 
   if (loading) {
+    console.log('⏳ Loading state');
     return (
       <View style={[styles.container, { backgroundColor: theme.dark ? '#000' : colors.background }]}>
         <View style={styles.loadingContainer}>
@@ -60,6 +70,7 @@ export default function GarageScreen() {
   }
 
   if (vehicles.length === 0) {
+    console.log('📭 Empty garage state');
     return (
       <View style={[styles.container, { backgroundColor: theme.dark ? '#000' : colors.background }]}>
         <View style={styles.emptyContainer}>
@@ -92,6 +103,7 @@ export default function GarageScreen() {
     );
   }
 
+  console.log('🚗 Rendering garage with vehicles:', vehicles.length);
   return (
     <View style={[styles.container, { backgroundColor: theme.dark ? '#000' : colors.background }]}>
       <ScrollView

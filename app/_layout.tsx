@@ -6,7 +6,7 @@ import { Stack } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
 import { SystemBars } from "react-native-edge-to-edge";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
-import { useColorScheme, Alert } from "react-native";
+import { useColorScheme, Alert, View, Text, StyleSheet } from "react-native";
 import { useNetworkState } from "expo-network";
 import {
   DarkTheme,
@@ -19,11 +19,80 @@ import { WidgetProvider } from "@/contexts/WidgetContext";
 
 SplashScreen.preventAutoHideAsync();
 
+console.log('🚀 App entry point loaded');
+
 export const unstable_settings = {
   initialRouteName: "(tabs)",
 };
 
+// Error Boundary Component
+class ErrorBoundary extends React.Component<
+  { children: React.ReactNode },
+  { hasError: boolean; error: Error | null }
+> {
+  constructor(props: { children: React.ReactNode }) {
+    super(props);
+    this.state = { hasError: false, error: null };
+  }
+
+  static getDerivedStateFromError(error: Error) {
+    console.error('❌ Error Boundary caught error:', error);
+    return { hasError: true, error };
+  }
+
+  componentDidCatch(error: Error, errorInfo: React.ErrorInfo) {
+    console.error('❌ Error details:', error, errorInfo);
+  }
+
+  render() {
+    if (this.state.hasError) {
+      return (
+        <View style={errorStyles.container}>
+          <Text style={errorStyles.title}>Something went wrong</Text>
+          <Text style={errorStyles.message}>
+            {this.state.error?.message || 'Unknown error'}
+          </Text>
+          <Text style={errorStyles.stack}>
+            {this.state.error?.stack || 'No stack trace'}
+          </Text>
+        </View>
+      );
+    }
+
+    return this.props.children;
+  }
+}
+
+const errorStyles = StyleSheet.create({
+  container: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 20,
+    backgroundColor: '#000',
+  },
+  title: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    color: '#FF0000',
+    marginBottom: 16,
+  },
+  message: {
+    fontSize: 16,
+    color: '#FFF',
+    marginBottom: 16,
+    textAlign: 'center',
+  },
+  stack: {
+    fontSize: 12,
+    color: '#AAA',
+    fontFamily: 'monospace',
+  },
+});
+
 export default function RootLayout() {
+  console.log('🎨 RootLayout rendering');
+  
   const colorScheme = useColorScheme();
   const networkState = useNetworkState();
   const [loaded] = useFonts({
@@ -31,12 +100,15 @@ export default function RootLayout() {
   });
 
   useEffect(() => {
+    console.log('📱 Fonts loaded:', loaded);
     if (loaded) {
       SplashScreen.hideAsync();
+      console.log('✅ Splash screen hidden');
     }
   }, [loaded]);
 
   React.useEffect(() => {
+    console.log('🌐 Network state:', networkState);
     if (
       !networkState.isConnected &&
       networkState.isInternetReachable === false
@@ -49,6 +121,7 @@ export default function RootLayout() {
   }, [networkState.isConnected, networkState.isInternetReachable]);
 
   if (!loaded) {
+    console.log('⏳ Waiting for fonts to load...');
     return null;
   }
 
@@ -77,23 +150,18 @@ export default function RootLayout() {
     },
   };
 
+  console.log('🎨 Theme:', colorScheme === 'dark' ? 'Dark' : 'Light');
+
   return (
-    <>
+    <ErrorBoundary>
       <StatusBar style="auto" animated />
       <ThemeProvider
         value={colorScheme === "dark" ? CustomDarkTheme : CustomDefaultTheme}
       >
         <WidgetProvider>
-          <GestureHandlerRootView>
+          <GestureHandlerRootView style={{ flex: 1 }}>
             <Stack>
               <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-              <Stack.Screen
-                name="vehicle-type-selection"
-                options={{
-                  presentation: "modal",
-                  headerShown: false,
-                }}
-              />
               <Stack.Screen
                 name="vehicle-registration"
                 options={{
@@ -136,6 +204,6 @@ export default function RootLayout() {
           </GestureHandlerRootView>
         </WidgetProvider>
       </ThemeProvider>
-    </>
+    </ErrorBoundary>
   );
 }

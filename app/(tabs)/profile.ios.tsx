@@ -12,7 +12,11 @@ import { useTheme } from '@react-navigation/native';
 import { colors } from '@/styles/commonStyles';
 import { IconSymbol } from '@/components/IconSymbol';
 
+console.log('👤 ProfileScreen (iOS) loaded');
+
 export default function ProfileScreen() {
+  console.log('👤 ProfileScreen (iOS) rendering');
+  
   const theme = useTheme();
 
   const handleExportData = () => {
@@ -29,7 +33,7 @@ export default function ProfileScreen() {
 
   const handleBackup = () => {
     Alert.alert(
-      'Backup Data',
+      'Cloud Backup',
       'To enable cloud backup, please connect to Supabase by pressing the Supabase button in the Natively interface.',
       [{ text: 'OK' }]
     );
@@ -37,7 +41,7 @@ export default function ProfileScreen() {
 
   const settingsItems = [
     {
-      icon: 'download',
+      icon: 'arrow_downward',
       title: 'Export Data',
       subtitle: 'Export as CSV or PDF',
       onPress: handleExportData,

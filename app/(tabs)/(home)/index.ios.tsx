@@ -8,43 +8,55 @@ import {
   TouchableOpacity,
   Image,
 } from 'react-native';
-import { useRouter } from 'expo-router';
+import { useRouter, useFocusEffect } from 'expo-router';
 import { useTheme } from '@react-navigation/native';
 import { colors, commonStyles } from '@/styles/commonStyles';
 import { IconSymbol } from '@/components/IconSymbol';
 import { Vehicle } from '@/types/vehicle';
 import { StorageService } from '@/utils/storage';
 
+console.log('🏠 GarageScreen (iOS) loaded');
+
 export default function GarageScreen() {
+  console.log('🏠 GarageScreen (iOS) rendering');
+  
   const router = useRouter();
   const theme = useTheme();
   const [vehicles, setVehicles] = useState<Vehicle[]>([]);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    loadVehicles();
-  }, []);
+  useFocusEffect(
+    React.useCallback(() => {
+      console.log('🔄 GarageScreen (iOS) focused, loading vehicles');
+      loadVehicles();
+    }, [])
+  );
 
   const loadVehicles = async () => {
     try {
+      console.log('📦 Loading vehicles from storage (iOS)');
       const data = await StorageService.getVehicles();
+      console.log('✅ Vehicles loaded (iOS):', data.length);
       setVehicles(data);
     } catch (error) {
-      console.error('Error loading vehicles:', error);
+      console.error('❌ Error loading vehicles (iOS):', error);
     } finally {
       setLoading(false);
     }
   };
 
   const handleAddVehicle = () => {
-    router.push('/vehicle-type-selection');
+    console.log('➕ Add vehicle button pressed (iOS)');
+    router.push('/vehicle-registration');
   };
 
   const handleVehiclePress = (vehicleId: string) => {
+    console.log('🚗 Vehicle pressed (iOS):', vehicleId);
     router.push(`/vehicle-detail/${vehicleId}`);
   };
 
   if (loading) {
+    console.log('⏳ Loading state (iOS)');
     return (
       <View style={[styles.container, { backgroundColor: theme.dark ? '#000' : colors.background }]}>
         <View style={styles.loadingContainer}>
@@ -57,6 +69,7 @@ export default function GarageScreen() {
   }
 
   if (vehicles.length === 0) {
+    console.log('📭 Empty garage state (iOS)');
     return (
       <View style={[styles.container, { backgroundColor: theme.dark ? '#000' : colors.background }]}>
         <View style={styles.emptyContainer}>
@@ -89,6 +102,7 @@ export default function GarageScreen() {
     );
   }
 
+  console.log('🚗 Rendering garage with vehicles (iOS):', vehicles.length);
   return (
     <View style={[styles.container, { backgroundColor: theme.dark ? '#000' : colors.background }]}>
       <ScrollView

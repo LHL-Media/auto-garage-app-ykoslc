@@ -3,7 +3,11 @@ import React from 'react';
 import { NativeTabs } from 'expo-router/unstable-native-tabs';
 import { colors } from '@/styles/commonStyles';
 
+console.log('📱 TabLayout (iOS) loaded');
+
 export default function TabLayout() {
+  console.log('🏠 TabLayout (iOS) rendering');
+  
   return (
     <NativeTabs
       backBehavior="history"
