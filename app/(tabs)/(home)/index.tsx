@@ -1,22 +1,182 @@
-import React from "react";
-import { FlatList, StyleSheet, View } from "react-native";
-import { useTheme } from "@react-navigation/native";
-import { modalDemos } from "@/components/homeData";
-import { DemoCard } from "@/components/DemoCard";
 
-export default function HomeScreen() {
+import React, { useState, useEffect } from 'react';
+import {
+  View,
+  Text,
+  StyleSheet,
+  ScrollView,
+  TouchableOpacity,
+  Image,
+  Platform,
+} from 'react-native';
+import { useRouter, useFocusEffect } from 'expo-router';
+import { useTheme } from '@react-navigation/native';
+import { colors, commonStyles } from '@/styles/commonStyles';
+import { IconSymbol } from '@/components/IconSymbol';
+import { Vehicle } from '@/types/vehicle';
+import { StorageService } from '@/utils/storage';
+
+export default function GarageScreen() {
+  const router = useRouter();
   const theme = useTheme();
+  const [vehicles, setVehicles] = useState<Vehicle[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useFocusEffect(
+    React.useCallback(() => {
+      loadVehicles();
+    }, [])
+  );
+
+  const loadVehicles = async () => {
+    try {
+      const data = await StorageService.getVehicles();
+      setVehicles(data);
+    } catch (error) {
+      console.error('Error loading vehicles:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleAddVehicle = () => {
+    router.push('/vehicle-type-selection');
+  };
+
+  const handleVehiclePress = (vehicleId: string) => {
+    router.push(`/vehicle-detail/${vehicleId}`);
+  };
+
+  if (loading) {
+    return (
+      <View style={[styles.container, { backgroundColor: theme.dark ? '#000' : colors.background }]}>
+        <View style={styles.loadingContainer}>
+          <Text style={[styles.loadingText, { color: theme.dark ? '#FFF' : colors.text }]}>
+            Loading your garage...
+          </Text>
+        </View>
+      </View>
+    );
+  }
+
+  if (vehicles.length === 0) {
+    return (
+      <View style={[styles.container, { backgroundColor: theme.dark ? '#000' : colors.background }]}>
+        <View style={styles.emptyContainer}>
+          <IconSymbol
+            ios_icon_name="car.fill"
+            android_material_icon_name="directions_car"
+            size={80}
+            color={theme.dark ? '#666' : colors.textSecondary}
+          />
+          <Text style={[styles.emptyTitle, { color: theme.dark ? '#FFF' : colors.text }]}>
+            Your Garage is Empty
+          </Text>
+          <Text style={[styles.emptyText, { color: theme.dark ? '#AAA' : colors.textSecondary }]}>
+            Add your first vehicle to start tracking maintenance, fuel, and more.
+          </Text>
+          <TouchableOpacity
+            style={[styles.addButton, { backgroundColor: colors.primary }]}
+            onPress={handleAddVehicle}
+          >
+            <IconSymbol
+              ios_icon_name="plus"
+              android_material_icon_name="add"
+              size={24}
+              color="#FFFFFF"
+            />
+            <Text style={styles.addButtonText}>Add Vehicle</Text>
+          </TouchableOpacity>
+        </View>
+      </View>
+    );
+  }
 
   return (
-    <View style={[styles.container, { backgroundColor: theme.colors.background }]}>
-      <FlatList
-        data={modalDemos}
-        renderItem={({ item }) => <DemoCard item={item} />}
-        keyExtractor={(item) => item.route}
-        contentContainerStyle={styles.listContainer}
-        contentInsetAdjustmentBehavior="automatic"
+    <View style={[styles.container, { backgroundColor: theme.dark ? '#000' : colors.background }]}>
+      <ScrollView
+        style={styles.scrollView}
+        contentContainerStyle={styles.scrollContent}
         showsVerticalScrollIndicator={false}
-      />
+      >
+        <View style={styles.header}>
+          <Text style={[styles.headerTitle, { color: theme.dark ? '#FFF' : colors.text }]}>
+            My Garage
+          </Text>
+          <Text style={[styles.headerSubtitle, { color: theme.dark ? '#AAA' : colors.textSecondary }]}>
+            {vehicles.length} {vehicles.length === 1 ? 'Vehicle' : 'Vehicles'}
+          </Text>
+        </View>
+
+        <View style={styles.vehiclesGrid}>
+          {vehicles.map((vehicle, index) => (
+            <React.Fragment key={index}>
+              <TouchableOpacity
+                style={[styles.vehicleCard, { backgroundColor: theme.dark ? '#1C1C1E' : colors.card }]}
+                onPress={() => handleVehiclePress(vehicle.id)}
+                activeOpacity={0.7}
+              >
+                {vehicle.photoUri ? (
+                  <Image source={{ uri: vehicle.photoUri }} style={styles.vehicleImage} />
+                ) : (
+                  <View style={[styles.vehicleImagePlaceholder, { backgroundColor: theme.dark ? '#2C2C2E' : colors.background }]}>
+                    <IconSymbol
+                      ios_icon_name={vehicle.type === 'car' ? 'car.fill' : 'bicycle'}
+                      android_material_icon_name={vehicle.type === 'car' ? 'directions_car' : 'motorcycle'}
+                      size={48}
+                      color={theme.dark ? '#666' : colors.textSecondary}
+                    />
+                  </View>
+                )}
+                <View style={styles.vehicleInfo}>
+                  <Text style={[styles.vehicleMake, { color: theme.dark ? '#FFF' : colors.text }]}>
+                    {vehicle.make} {vehicle.model}
+                  </Text>
+                  <Text style={[styles.vehicleYear, { color: theme.dark ? '#AAA' : colors.textSecondary }]}>
+                    {vehicle.year}
+                  </Text>
+                  <View style={styles.vehicleDetails}>
+                    <View style={styles.detailRow}>
+                      <IconSymbol
+                        ios_icon_name="number"
+                        android_material_icon_name="confirmation_number"
+                        size={14}
+                        color={theme.dark ? '#AAA' : colors.textSecondary}
+                      />
+                      <Text style={[styles.detailText, { color: theme.dark ? '#AAA' : colors.textSecondary }]}>
+                        {vehicle.licensePlate}
+                      </Text>
+                    </View>
+                    <View style={styles.detailRow}>
+                      <IconSymbol
+                        ios_icon_name="gauge"
+                        android_material_icon_name="speed"
+                        size={14}
+                        color={theme.dark ? '#AAA' : colors.textSecondary}
+                      />
+                      <Text style={[styles.detailText, { color: theme.dark ? '#AAA' : colors.textSecondary }]}>
+                        {vehicle.currentMileage.toLocaleString()} km
+                      </Text>
+                    </View>
+                  </View>
+                </View>
+              </TouchableOpacity>
+            </React.Fragment>
+          ))}
+        </View>
+
+        <TouchableOpacity
+          style={[styles.fabButton, { backgroundColor: colors.primary }]}
+          onPress={handleAddVehicle}
+        >
+          <IconSymbol
+            ios_icon_name="plus"
+            android_material_icon_name="add"
+            size={28}
+            color="#FFFFFF"
+          />
+        </TouchableOpacity>
+      </ScrollView>
     </View>
   );
 }
@@ -25,9 +185,118 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
-  listContainer: {
-    paddingTop: 48,
+  scrollView: {
+    flex: 1,
+  },
+  scrollContent: {
+    paddingTop: Platform.OS === 'android' ? 48 : 16,
     paddingHorizontal: 16,
-    paddingBottom: 100, // Extra padding for floating tab bar
+    paddingBottom: 120,
+  },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  loadingText: {
+    fontSize: 16,
+    fontWeight: '500',
+  },
+  emptyContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingHorizontal: 32,
+  },
+  emptyTitle: {
+    fontSize: 24,
+    fontWeight: '700',
+    marginTop: 24,
+    marginBottom: 8,
+  },
+  emptyText: {
+    fontSize: 16,
+    textAlign: 'center',
+    marginBottom: 32,
+    lineHeight: 24,
+  },
+  addButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: 24,
+    paddingVertical: 14,
+    borderRadius: 12,
+    gap: 8,
+  },
+  addButtonText: {
+    color: '#FFFFFF',
+    fontSize: 16,
+    fontWeight: '600',
+  },
+  header: {
+    marginBottom: 24,
+  },
+  headerTitle: {
+    fontSize: 32,
+    fontWeight: '700',
+    marginBottom: 4,
+  },
+  headerSubtitle: {
+    fontSize: 16,
+  },
+  vehiclesGrid: {
+    gap: 16,
+  },
+  vehicleCard: {
+    borderRadius: 16,
+    overflow: 'hidden',
+    boxShadow: '0px 2px 8px rgba(0, 0, 0, 0.1)',
+    elevation: 3,
+  },
+  vehicleImage: {
+    width: '100%',
+    height: 200,
+    resizeMode: 'cover',
+  },
+  vehicleImagePlaceholder: {
+    width: '100%',
+    height: 200,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  vehicleInfo: {
+    padding: 16,
+  },
+  vehicleMake: {
+    fontSize: 20,
+    fontWeight: '700',
+    marginBottom: 4,
+  },
+  vehicleYear: {
+    fontSize: 14,
+    marginBottom: 12,
+  },
+  vehicleDetails: {
+    gap: 8,
+  },
+  detailRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+  },
+  detailText: {
+    fontSize: 14,
+  },
+  fabButton: {
+    position: 'absolute',
+    bottom: 32,
+    right: 32,
+    width: 56,
+    height: 56,
+    borderRadius: 28,
+    justifyContent: 'center',
+    alignItems: 'center',
+    boxShadow: '0px 4px 12px rgba(0, 0, 0, 0.2)',
+    elevation: 6,
   },
 });
