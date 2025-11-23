@@ -39,6 +39,9 @@ export const translations = {
     discardChanges: 'Discard Changes',
     add: 'Add',
     back: 'Back',
+    export: 'Export',
+    share: 'Share',
+    refresh: 'Refresh',
     
     // Vehicle Form
     vehicleType: 'Vehicle Type',
@@ -56,6 +59,28 @@ export const translations = {
     required: 'Required',
     optional: 'Optional',
     
+    // Fuel Types
+    benzin: 'Benzin/Petrol',
+    diesel: 'Diesel',
+    super: 'Super',
+    e10: 'E10',
+    electric: 'Electric',
+    hybrid: 'Hybrid',
+    lpg: 'LPG',
+    
+    // Maintenance Categories
+    oil_change: 'Oil Change',
+    tire_rotation: 'Tire Rotation',
+    brake_service: 'Brake Service',
+    inspection: 'Inspection',
+    battery: 'Battery',
+    air_filter: 'Air Filter',
+    cabin_filter: 'Cabin Filter',
+    spark_plugs: 'Spark Plugs',
+    coolant: 'Coolant',
+    transmission: 'Transmission',
+    other: 'Other',
+    
     // Messages
     loading: 'Loading...',
     saving: 'Saving...',
@@ -66,6 +91,7 @@ export const translations = {
     vehicleNotFound: 'Vehicle not found',
     success: 'Success',
     error: 'Error',
+    noData: 'No data available',
     
     // Alerts
     deleteVehicleTitle: 'Delete Vehicle',
@@ -87,6 +113,7 @@ export const translations = {
     invalidMileageMessage: 'Please enter a valid mileage (0 or greater).',
     invalidVIN: 'Invalid VIN',
     invalidVINMessage: 'VIN must be exactly 17 characters.',
+    odometerWarning: 'Odometer Warning',
     
     // Quick Actions
     quickActions: 'Quick Actions',
@@ -116,8 +143,18 @@ export const translations = {
     maintenanceCost: 'Cost',
     serviceType: 'Service Type',
     serviceProvider: 'Service Provider',
+    serviceProviderName: 'Service Provider Name',
+    serviceProviderPhone: 'Phone',
+    serviceProviderAddress: 'Address',
     addMaintenance: 'Add Maintenance',
     editMaintenance: 'Edit Maintenance',
+    laborCost: 'Labor Cost',
+    partsCost: 'Parts Cost',
+    taxCost: 'Tax',
+    totalCost: 'Total Cost',
+    partsReplaced: 'Parts Replaced',
+    warrantyExpiry: 'Warranty Expiry',
+    category: 'Category',
     
     // Fuel Log
     fuelAmount: 'Amount',
@@ -126,6 +163,14 @@ export const translations = {
     station: 'Station',
     addFuelLog: 'Add Fuel Log',
     editFuelLog: 'Edit Fuel Log',
+    partialFill: 'Partial Fill',
+    pricePerUnit: 'Price per Unit',
+    efficiency: 'Efficiency',
+    fuelEfficiency: 'Fuel Efficiency',
+    costPerKm: 'Cost per km',
+    bestEfficiency: 'Best Efficiency',
+    worstEfficiency: 'Worst Efficiency',
+    priceTrends: 'Price Trends',
     
     // Trip Log
     startLocation: 'Start Location',
@@ -144,10 +189,67 @@ export const translations = {
     addModification: 'Add Modification',
     editModification: 'Edit Modification',
     
+    // Reminders
+    title: 'Title',
+    dueDate: 'Due Date',
+    dueMileage: 'Due Mileage',
+    reminderType: 'Reminder Type',
+    recurring: 'Recurring',
+    recurringInterval: 'Recurring Interval',
+    completed: 'Completed',
+    addReminder: 'Add Reminder',
+    editReminder: 'Edit Reminder',
+    upcomingReminders: 'Upcoming Reminders',
+    
+    // Insurance
+    insurance: 'Insurance',
+    provider: 'Provider',
+    policyNumber: 'Policy Number',
+    startDate: 'Start Date',
+    expiryDate: 'Expiry Date',
+    premium: 'Premium',
+    coverageType: 'Coverage Type',
+    addInsurance: 'Add Insurance',
+    editInsurance: 'Edit Insurance',
+    
+    // Recalls
+    recalls: 'Recalls',
+    recallTitle: 'Recall Title',
+    recallDate: 'Recall Date',
+    status: 'Status',
+    open: 'Open',
+    resolved: 'Resolved',
+    resolvedDate: 'Resolved Date',
+    addRecall: 'Add Recall',
+    editRecall: 'Edit Recall',
+    
+    // Analytics
+    totalCostOfOwnership: 'Total Cost of Ownership',
+    monthlyExpenses: 'Monthly Expenses',
+    yearlyComparison: 'Yearly Comparison',
+    maintenanceCostBreakdown: 'Maintenance Cost Breakdown',
+    depreciation: 'Depreciation',
+    exportData: 'Export Data',
+    exportCSV: 'Export as CSV',
+    exportPDF: 'Export as PDF',
+    
     // Units
     km: 'km',
     liters: 'liters',
     euro: '€',
+    perKm: '/km',
+    lPer100km: 'L/100km',
+    months: 'months',
+    
+    // Empty States
+    noMaintenanceRecords: 'No maintenance records yet',
+    noFuelLogs: 'No fuel logs yet',
+    noTripLogs: 'No trip logs yet',
+    noModifications: 'No modifications yet',
+    noDocuments: 'No documents yet',
+    noReminders: 'No reminders yet',
+    noInsurance: 'No insurance policies yet',
+    noRecalls: 'No recalls yet',
   },
   de: {
     // Navigation
@@ -182,6 +284,9 @@ export const translations = {
     discardChanges: 'Änderungen verwerfen',
     add: 'Hinzufügen',
     back: 'Zurück',
+    export: 'Exportieren',
+    share: 'Teilen',
+    refresh: 'Aktualisieren',
     
     // Vehicle Form
     vehicleType: 'Fahrzeugtyp',
@@ -199,6 +304,28 @@ export const translations = {
     required: 'Erforderlich',
     optional: 'Optional',
     
+    // Fuel Types
+    benzin: 'Benzin',
+    diesel: 'Diesel',
+    super: 'Super',
+    e10: 'E10',
+    electric: 'Elektrisch',
+    hybrid: 'Hybrid',
+    lpg: 'LPG',
+    
+    // Maintenance Categories
+    oil_change: 'Ölwechsel',
+    tire_rotation: 'Reifenwechsel',
+    brake_service: 'Bremsenwartung',
+    inspection: 'Inspektion',
+    battery: 'Batterie',
+    air_filter: 'Luftfilter',
+    cabin_filter: 'Innenraumfilter',
+    spark_plugs: 'Zündkerzen',
+    coolant: 'Kühlmittel',
+    transmission: 'Getriebe',
+    other: 'Sonstiges',
+    
     // Messages
     loading: 'Lädt...',
     saving: 'Speichert...',
@@ -209,6 +336,7 @@ export const translations = {
     vehicleNotFound: 'Fahrzeug nicht gefunden',
     success: 'Erfolg',
     error: 'Fehler',
+    noData: 'Keine Daten verfügbar',
     
     // Alerts
     deleteVehicleTitle: 'Fahrzeug löschen',
@@ -230,6 +358,7 @@ export const translations = {
     invalidMileageMessage: 'Bitte geben Sie einen gültigen Kilometerstand ein (0 oder größer).',
     invalidVIN: 'Ungültige FIN',
     invalidVINMessage: 'FIN muss genau 17 Zeichen lang sein.',
+    odometerWarning: 'Kilometerstand-Warnung',
     
     // Quick Actions
     quickActions: 'Schnellaktionen',
@@ -259,8 +388,18 @@ export const translations = {
     maintenanceCost: 'Kosten',
     serviceType: 'Servicetyp',
     serviceProvider: 'Serviceanbieter',
+    serviceProviderName: 'Name des Serviceanbieters',
+    serviceProviderPhone: 'Telefon',
+    serviceProviderAddress: 'Adresse',
     addMaintenance: 'Wartung hinzufügen',
     editMaintenance: 'Wartung bearbeiten',
+    laborCost: 'Arbeitskosten',
+    partsCost: 'Teilekosten',
+    taxCost: 'Steuer',
+    totalCost: 'Gesamtkosten',
+    partsReplaced: 'Ersetzte Teile',
+    warrantyExpiry: 'Garantieablauf',
+    category: 'Kategorie',
     
     // Fuel Log
     fuelAmount: 'Menge',
@@ -269,6 +408,14 @@ export const translations = {
     station: 'Tankstelle',
     addFuelLog: 'Tankvorgang hinzufügen',
     editFuelLog: 'Tankvorgang bearbeiten',
+    partialFill: 'Teilbetankung',
+    pricePerUnit: 'Preis pro Einheit',
+    efficiency: 'Effizienz',
+    fuelEfficiency: 'Kraftstoffeffizienz',
+    costPerKm: 'Kosten pro km',
+    bestEfficiency: 'Beste Effizienz',
+    worstEfficiency: 'Schlechteste Effizienz',
+    priceTrends: 'Preistrends',
     
     // Trip Log
     startLocation: 'Startort',
@@ -287,10 +434,67 @@ export const translations = {
     addModification: 'Änderung hinzufügen',
     editModification: 'Änderung bearbeiten',
     
+    // Reminders
+    title: 'Titel',
+    dueDate: 'Fälligkeitsdatum',
+    dueMileage: 'Fälliger Kilometerstand',
+    reminderType: 'Erinnerungstyp',
+    recurring: 'Wiederkehrend',
+    recurringInterval: 'Wiederholungsintervall',
+    completed: 'Abgeschlossen',
+    addReminder: 'Erinnerung hinzufügen',
+    editReminder: 'Erinnerung bearbeiten',
+    upcomingReminders: 'Anstehende Erinnerungen',
+    
+    // Insurance
+    insurance: 'Versicherung',
+    provider: 'Anbieter',
+    policyNumber: 'Policennummer',
+    startDate: 'Startdatum',
+    expiryDate: 'Ablaufdatum',
+    premium: 'Prämie',
+    coverageType: 'Deckungsart',
+    addInsurance: 'Versicherung hinzufügen',
+    editInsurance: 'Versicherung bearbeiten',
+    
+    // Recalls
+    recalls: 'Rückrufe',
+    recallTitle: 'Rückruftitel',
+    recallDate: 'Rückrufdatum',
+    status: 'Status',
+    open: 'Offen',
+    resolved: 'Gelöst',
+    resolvedDate: 'Lösungsdatum',
+    addRecall: 'Rückruf hinzufügen',
+    editRecall: 'Rückruf bearbeiten',
+    
+    // Analytics
+    totalCostOfOwnership: 'Gesamtbetriebskosten',
+    monthlyExpenses: 'Monatliche Ausgaben',
+    yearlyComparison: 'Jahresvergleich',
+    maintenanceCostBreakdown: 'Wartungskostenaufschlüsselung',
+    depreciation: 'Wertverlust',
+    exportData: 'Daten exportieren',
+    exportCSV: 'Als CSV exportieren',
+    exportPDF: 'Als PDF exportieren',
+    
     // Units
     km: 'km',
     liters: 'Liter',
     euro: '€',
+    perKm: '/km',
+    lPer100km: 'L/100km',
+    months: 'Monate',
+    
+    // Empty States
+    noMaintenanceRecords: 'Noch keine Wartungseinträge',
+    noFuelLogs: 'Noch keine Tankvorgänge',
+    noTripLogs: 'Noch keine Fahrten',
+    noModifications: 'Noch keine Änderungen',
+    noDocuments: 'Noch keine Dokumente',
+    noReminders: 'Noch keine Erinnerungen',
+    noInsurance: 'Noch keine Versicherungspolicen',
+    noRecalls: 'Noch keine Rückrufe',
   },
 };
 
