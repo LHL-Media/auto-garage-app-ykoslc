@@ -449,7 +449,7 @@ export default function VehicleRegistration() {
                   size={20}
                   color="#FFFFFF"
                 />
-                <Text style={styles.saveButtonText}>{t('save')} {t('vehicle')}</Text>
+                <Text style={styles.saveButtonText}>Fahrzeug Speichern</Text>
               </>
             )}
           </TouchableOpacity>

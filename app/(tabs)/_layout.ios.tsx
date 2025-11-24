@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { NativeTabs } from 'expo-router/unstable-native-tabs';
+import { NativeTabs, Icon, Label } from 'expo-router/unstable-native-tabs';
 import { colors } from '@/styles/commonStyles';
 import { useI18n } from '@/contexts/I18nContext';
 
@@ -14,30 +14,16 @@ export default function TabLayout() {
   return (
     <NativeTabs
       backBehavior="history"
-      tabBarActiveTintColor={colors.primary}
+      tintColor={colors.primary}
     >
-      <NativeTabs.Screen
-        name="(home)"
-        options={{
-          title: t('garage'),
-          tabBarIcon: ({ color }) => ({
-            ios: {
-              name: 'car.fill',
-            },
-          }),
-        }}
-      />
-      <NativeTabs.Screen
-        name="profile"
-        options={{
-          title: t('settings'),
-          tabBarIcon: ({ color }) => ({
-            ios: {
-              name: 'gearshape.fill',
-            },
-          }),
-        }}
-      />
+      <NativeTabs.Trigger name="(home)">
+        <Label>{t('garage')}</Label>
+        <Icon sf="car.fill" />
+      </NativeTabs.Trigger>
+      <NativeTabs.Trigger name="profile">
+        <Label>{t('settings')}</Label>
+        <Icon sf="gearshape.fill" />
+      </NativeTabs.Trigger>
     </NativeTabs>
   );
 }

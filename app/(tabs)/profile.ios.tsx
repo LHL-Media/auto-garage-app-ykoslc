@@ -11,6 +11,7 @@ import {
 import { useTheme } from '@react-navigation/native';
 import { colors } from '@/styles/commonStyles';
 import { IconSymbol } from '@/components/IconSymbol';
+import { useI18n } from '@/contexts/I18nContext';
 
 console.log('👤 ProfileScreen (iOS) loaded');
 
@@ -18,15 +19,26 @@ export default function ProfileScreen() {
   console.log('👤 ProfileScreen (iOS) rendering');
   
   const theme = useTheme();
+  const { t, locale, changeLanguage } = useI18n();
+
+  const handleLanguageChange = async (newLocale: string) => {
+    try {
+      await changeLanguage(newLocale);
+      Alert.alert(t('success'), `${t('language')}: ${newLocale === 'de' ? t('german') : t('english')}`);
+    } catch (error) {
+      console.error('❌ Error changing language:', error);
+      Alert.alert(t('error'), 'Failed to change language');
+    }
+  };
 
   const handleExportData = () => {
     Alert.alert(
-      'Export Data',
+      t('exportData'),
       'Export your vehicle data as CSV or PDF for tax purposes and record keeping.',
       [
-        { text: 'Cancel', style: 'cancel' },
-        { text: 'Export CSV', onPress: () => console.log('Export CSV') },
-        { text: 'Export PDF', onPress: () => console.log('Export PDF') },
+        { text: t('cancel'), style: 'cancel' },
+        { text: t('exportCSV'), onPress: () => console.log('Export CSV') },
+        { text: t('exportPDF'), onPress: () => console.log('Export PDF') },
       ]
     );
   };
@@ -42,24 +54,28 @@ export default function ProfileScreen() {
   const settingsItems = [
     {
       icon: 'arrow_downward',
-      title: 'Export Data',
+      iosIcon: 'arrow.down.circle.fill',
+      title: t('exportData'),
       subtitle: 'Export as CSV or PDF',
       onPress: handleExportData,
     },
     {
       icon: 'cloud_upload',
+      iosIcon: 'icloud.and.arrow.up.fill',
       title: 'Cloud Backup',
       subtitle: 'Backup to Supabase',
       onPress: handleBackup,
     },
     {
       icon: 'notifications',
+      iosIcon: 'bell.fill',
       title: 'Notifications',
       subtitle: 'Manage reminder alerts',
       onPress: () => console.log('Notifications'),
     },
     {
       icon: 'palette',
+      iosIcon: 'paintpalette.fill',
       title: 'Appearance',
       subtitle: 'Light/Dark mode (Auto)',
       onPress: () => console.log('Appearance'),
@@ -69,12 +85,14 @@ export default function ProfileScreen() {
   const aboutItems = [
     {
       icon: 'info',
+      iosIcon: 'info.circle.fill',
       title: 'About',
       subtitle: 'Version 1.0.0',
       onPress: () => console.log('About'),
     },
     {
       icon: 'help',
+      iosIcon: 'questionmark.circle.fill',
       title: 'Help & Support',
       subtitle: 'Get help with the app',
       onPress: () => console.log('Help'),
@@ -106,6 +124,62 @@ export default function ProfileScreen() {
         </View>
 
         <View style={styles.section}>
+          <Text style={[styles.sectionTitle, { color: theme.dark ? '#FFF' : colors.text }]}>
+            {t('language')}
+          </Text>
+          
+          <TouchableOpacity
+            style={[
+              styles.languageCard,
+              { backgroundColor: theme.dark ? '#1C1C1E' : colors.card },
+              locale === 'de' && styles.languageCardActive,
+            ]}
+            onPress={() => handleLanguageChange('de')}
+            activeOpacity={0.7}
+          >
+            <View style={styles.languageContent}>
+              <Text style={styles.flagIcon}>🇩🇪</Text>
+              <Text style={[styles.languageText, { color: theme.dark ? '#FFF' : colors.text }]}>
+                {t('german')}
+              </Text>
+            </View>
+            {locale === 'de' && (
+              <IconSymbol
+                ios_icon_name="checkmark.circle.fill"
+                android_material_icon_name="check_circle"
+                size={24}
+                color={colors.primary}
+              />
+            )}
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            style={[
+              styles.languageCard,
+              { backgroundColor: theme.dark ? '#1C1C1E' : colors.card },
+              locale === 'en' && styles.languageCardActive,
+            ]}
+            onPress={() => handleLanguageChange('en')}
+            activeOpacity={0.7}
+          >
+            <View style={styles.languageContent}>
+              <Text style={styles.flagIcon}>🇬🇧</Text>
+              <Text style={[styles.languageText, { color: theme.dark ? '#FFF' : colors.text }]}>
+                {t('english')}
+              </Text>
+            </View>
+            {locale === 'en' && (
+              <IconSymbol
+                ios_icon_name="checkmark.circle.fill"
+                android_material_icon_name="check_circle"
+                size={24}
+                color={colors.primary}
+              />
+            )}
+          </TouchableOpacity>
+        </View>
+
+        <View style={styles.section}>
           <Text style={[styles.sectionTitle, { color: theme.dark ? '#AAA' : colors.textSecondary }]}>
             SETTINGS
           </Text>
@@ -123,7 +197,7 @@ export default function ProfileScreen() {
                 >
                   <View style={[styles.iconCircle, { backgroundColor: colors.primary + '20' }]}>
                     <IconSymbol
-                      ios_icon_name={item.icon}
+                      ios_icon_name={item.iosIcon}
                       android_material_icon_name={item.icon}
                       size={24}
                       color={colors.primary}
@@ -167,7 +241,7 @@ export default function ProfileScreen() {
                 >
                   <View style={[styles.iconCircle, { backgroundColor: colors.secondary + '20' }]}>
                     <IconSymbol
-                      ios_icon_name={item.icon}
+                      ios_icon_name={item.iosIcon}
                       android_material_icon_name={item.icon}
                       size={24}
                       color={colors.secondary}
@@ -239,11 +313,35 @@ const styles = StyleSheet.create({
     marginBottom: 24,
   },
   sectionTitle: {
-    fontSize: 13,
+    fontSize: 20,
+    fontWeight: '700',
+    marginBottom: 16,
+  },
+  languageCard: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    padding: 16,
+    borderRadius: 12,
+    marginBottom: 12,
+    boxShadow: '0px 2px 8px rgba(0, 0, 0, 0.1)',
+    elevation: 3,
+  },
+  languageCardActive: {
+    borderWidth: 2,
+    borderColor: colors.primary,
+  },
+  languageContent: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 12,
+  },
+  flagIcon: {
+    fontSize: 32,
+  },
+  languageText: {
+    fontSize: 18,
     fontWeight: '600',
-    marginBottom: 8,
-    marginLeft: 16,
-    letterSpacing: 0.5,
   },
   card: {
     borderRadius: 16,
